@@ -1,5 +1,9 @@
 import { execa } from 'execa'
 
+export function downloadFilename (): string {
+  return 'the' + (platformName() === 'windows' ? '.exe' : '')
+}
+
 export function downloadUrl (version: string): string {
   return `https://cdn.thelang.io/cli-core-${platformName()}@${version}`
 }
