@@ -5,12 +5,7 @@ import { downloadUrl, getInstalledVersion } from './utils'
 
 async function run (): Promise<void> {
   try {
-    const version = core.getInput('the-version')
-
-    if (version.length === 0) {
-      throw new Error('the-version input expected to be set')
-    }
-
+    const version = core.getInput('the-version', { required: true })
     let cachedPath = tc.find('the', version)
 
     if (cachedPath.length === 0) {
