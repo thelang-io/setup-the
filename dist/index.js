@@ -50,9 +50,10 @@ function run() {
             let cachedPath = tc.find('the', version);
             if (cachedPath.length === 0) {
                 core.debug(`Could not find The programming language version ${version} in cache, downloading it ...`);
-                const installationPath = yield tc.downloadTool((0, utils_1.downloadUrl)(version));
+                const installationPath = yield tc.downloadTool((0, utils_1.downloadUrl)(version), (0, utils_1.downloadFilename)());
                 const installationDirectory = path.dirname(installationPath);
                 cachedPath = yield tc.cacheDir(installationDirectory, 'the', version);
+                core.debug(`Cached The programming language version ${version} to ${cachedPath}.`);
             }
             core.addPath(cachedPath);
             core.setOutput('the-version', (0, utils_1.getInstalledVersion)());
@@ -84,8 +85,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.platformName = exports.getInstalledVersion = exports.extractVersionFromOutput = exports.downloadUrl = void 0;
+exports.platformName = exports.getInstalledVersion = exports.extractVersionFromOutput = exports.downloadUrl = exports.downloadFilename = void 0;
 const execa_1 = __nccwpck_require__(9956);
+function downloadFilename() {
+    return 'the' + (platformName() === 'windows' ? '.exe' : '');
+}
+exports.downloadFilename = downloadFilename;
 function downloadUrl(version) {
     return `https://cdn.thelang.io/cli-core-${platformName()}@${version}`;
 }
