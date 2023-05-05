@@ -11,7 +11,7 @@ async function run (): Promise<void> {
 
     if (cachedPath.length === 0) {
       core.debug(`Could not find The programming language version ${version} in cache, downloading it ...`)
-      const installationPath = await tc.downloadTool(downloadUrl(version), 'the/' + downloadFilename())
+      const installationPath = await tc.downloadTool(downloadUrl(version), downloadFilename())
 
       if (platformName() !== 'windows') {
         fs.chmodSync(installationPath, 0o755)

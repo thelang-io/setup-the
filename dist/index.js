@@ -51,7 +51,7 @@ function run() {
             let cachedPath = tc.find('the', version);
             if (cachedPath.length === 0) {
                 core.debug(`Could not find The programming language version ${version} in cache, downloading it ...`);
-                const installationPath = yield tc.downloadTool((0, utils_1.downloadUrl)(version), 'the/' + (0, utils_1.downloadFilename)());
+                const installationPath = yield tc.downloadTool((0, utils_1.downloadUrl)(version), (0, utils_1.downloadFilename)());
                 if ((0, utils_1.platformName)() !== 'windows') {
                     fs.chmodSync(installationPath, 0o755);
                 }
