@@ -1,0 +1,33 @@
+name: Validate
+
+on:
+  push:
+    branches: ['main']
+    paths-ignore: ['**.md']
+  pull_request:
+    paths-ignore: ['**.md']
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3.6.0
+        with:
+          node-version: 16.x
+      - run: npm ci
+      - run: npm run build
+      - run: npm run package
+      - id: diff
+        run: |
+          if [ "$(git diff --ignore-space-at-eol dist/ | wc -l)" -gt "0" ]; then
+            echo "Detected uncommitted changes after build. See status below:"
+            git diff
+            exit 1
+          fi
+      - if: ${{ failure() && steps.diff.conclusion == 'failure' }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: dist/

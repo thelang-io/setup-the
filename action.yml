@@ -1,0 +1,17 @@
+name: 'Setup The'
+description: 'Setup The environment by downloading and adding it to the PATH.'
+author: 'Aaron Delasy'
+
+inputs:
+  the-version:
+    description: 'Version of The programming language. Needs to be exact version, will not work otherwise. Examples: 0.12.0, 0.12.1, latest'
+    default: 'latest'
+    required: true
+
+outputs:
+  the-version:
+    description: 'The programming language version that was installed.'
+
+runs:
+  using: 'node16'
+  main: 'dist/index.js'
