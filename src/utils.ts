@@ -1,4 +1,4 @@
-import { $ } from 'execa'
+import { execa } from 'execa'
 
 export function downloadUrl (version: string): string {
   return `https://cdn.thelang.io/cli-core-${platformName()}@${version}`
@@ -16,7 +16,7 @@ export function extractVersionFromOutput (output: string): string | null {
 }
 
 export async function getInstalledVersion (): Promise<string> {
-  const { stderr, stdout } = await $`the -v`
+  const { stderr, stdout } = await execa('the', ['-v'])
   let version = null
 
   if (stderr.length === 0 && stdout.length !== 0) {
