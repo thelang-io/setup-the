@@ -40,6 +40,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(2186));
+const fs = __importStar(__nccwpck_require__(7147));
 const path = __importStar(__nccwpck_require__(1017));
 const tc = __importStar(__nccwpck_require__(7784));
 const utils_1 = __nccwpck_require__(918);
@@ -50,7 +51,10 @@ function run() {
             let cachedPath = tc.find('the', version);
             if (cachedPath.length === 0) {
                 core.debug(`Could not find The programming language version ${version} in cache, downloading it ...`);
-                const installationPath = yield tc.downloadTool((0, utils_1.downloadUrl)(version), (0, utils_1.downloadFilename)());
+                const installationPath = yield tc.downloadTool((0, utils_1.downloadUrl)(version), 'the/' + (0, utils_1.downloadFilename)());
+                if ((0, utils_1.platformName)() !== 'windows') {
+                    fs.chmodSync(installationPath, 0o755);
+                }
                 const installationDirectory = path.dirname(installationPath);
                 cachedPath = yield tc.cacheDir(installationDirectory, 'the', version);
                 core.debug(`Cached The programming language version ${version} to ${cachedPath}.`);
