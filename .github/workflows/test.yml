@@ -29,4 +29,4 @@ jobs:
       - run: npm run all
       - uses: ./
         with:
-          the-version: 0.13
+          the-version: 0.13.0
