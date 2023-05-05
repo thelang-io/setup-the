@@ -102,7 +102,7 @@ function extractVersionFromOutput(output) {
 exports.extractVersionFromOutput = extractVersionFromOutput;
 function getInstalledVersion() {
     return __awaiter(this, void 0, void 0, function* () {
-        const { stderr, stdout } = yield (0, execa_1.$) `the -v`;
+        const { stderr, stdout } = yield (0, execa_1.execa)('the', ['-v']);
         let version = null;
         if (stderr.length === 0 && stdout.length !== 0) {
             version = extractVersionFromOutput(stdout);
