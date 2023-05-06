@@ -45,17 +45,22 @@ const path = __importStar(__nccwpck_require__(1017));
 const tc = __importStar(__nccwpck_require__(7784));
 const utils_1 = __nccwpck_require__(918);
 function run() {
+    var _a;
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            const tempDirectory = (_a = process.env.RUNNER_TEMP) !== null && _a !== void 0 ? _a : '';
+            if (tempDirectory === '') {
+                throw new Error('GitHub runner temporary directory is not set');
+            }
             const version = core.getInput('the-version', { required: true });
             let cachedPath = tc.find('the', version);
             if (cachedPath.length === 0) {
                 core.debug(`Could not find The programming language version ${version} in cache, downloading it ...`);
-                const installationPath = yield tc.downloadTool((0, utils_1.downloadUrl)(version), (0, utils_1.downloadFilename)());
+                const installationDirectory = path.join(tempDirectory, `the-${version}`);
+                const installationPath = yield tc.downloadTool((0, utils_1.downloadUrl)(version), path.join(installationDirectory, (0, utils_1.downloadFilename)()));
                 if ((0, utils_1.platformName)() !== 'windows') {
                     fs.chmodSync(installationPath, 0o755);
                 }
-                const installationDirectory = path.dirname(installationPath);
                 cachedPath = yield tc.cacheDir(installationDirectory, 'the', version);
                 core.debug(`Cached The programming language version ${version} to ${cachedPath}.`);
             }
