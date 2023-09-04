@@ -13,7 +13,7 @@ jobs:
       matrix:
         os: ['macos-11', 'macos-12', 'macos-13', 'ubuntu-20.04', 'ubuntu-22.04', 'windows-2022']
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: npm install
       - run: npm run all
       - uses: ./
@@ -24,7 +24,7 @@ jobs:
       matrix:
         os: ['macos-11', 'macos-12', 'macos-13', 'ubuntu-20.04', 'ubuntu-22.04', 'windows-2022']
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: npm install
       - run: npm run all
       - uses: ./
