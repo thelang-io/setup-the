@@ -8,7 +8,7 @@ export function downloadUrl (version: string): string {
   const platform = platformName()
   const arch = platformArch()
   const [major = '', minor = ''] = version.split('.')
-  const versionBeforeMacOSArch = parseInt(major) === 0 && parseInt(minor) < 14
+  const versionBeforeMacOSArch = version !== 'latest' && parseInt(major) === 0 && parseInt(minor) < 14
 
   if (platform === 'macos' && !versionBeforeMacOSArch) {
     return `https://cdn.thelang.io/cli-core-${platform}-${arch}@${version}`
