@@ -5,7 +5,14 @@ export function downloadFilename (): string {
 }
 
 export function downloadUrl (version: string): string {
-  return `https://cdn.thelang.io/cli-core-${platformName()}@${version}`
+  const platform = platformName()
+  const arch = platformArch()
+
+  if (platform === 'macos') {
+    return `https://cdn.thelang.io/cli-core-${platform}-${arch}@${version}`
+  } else {
+    return `https://cdn.thelang.io/cli-core-${platform}@${version}`
+  }
 }
 
 export function extractVersionFromOutput (output: string): string | null {
@@ -32,6 +39,14 @@ export async function getInstalledVersion (): Promise<string> {
   }
 
   return version
+}
+
+export function platformArch (): string {
+  if (process.arch === 'x64') {
+    return 'x86_64'
+  } else {
+    return process.arch
+  }
 }
 
 export function platformName (): string {
