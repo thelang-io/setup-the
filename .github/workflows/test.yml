@@ -17,6 +17,7 @@ jobs:
       - run: npm install
       - run: npm run all
       - uses: ./
+      - run: the -v
   test-version:
     runs-on: ${{ matrix.os }}
     strategy:
