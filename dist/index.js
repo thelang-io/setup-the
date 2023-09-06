@@ -103,7 +103,9 @@ exports.downloadFilename = downloadFilename;
 function downloadUrl(version) {
     const platform = platformName();
     const arch = platformArch();
-    if (platform === 'macos') {
+    const [major = '', minor = ''] = version.split('.');
+    const versionBeforeMacOSArch = parseInt(major) === 0 && parseInt(minor) < 14;
+    if (versionBeforeMacOSArch && platform === 'macos') {
         return `https://cdn.thelang.io/cli-core-${platform}-${arch}@${version}`;
     }
     else {
