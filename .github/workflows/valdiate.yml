@@ -24,7 +24,7 @@ jobs:
             exit 1
           fi
       - if: ${{ failure() && steps.diff.conclusion == 'failure' }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: dist
           path: dist/
