@@ -32,7 +32,7 @@
     "format": "ts-standard --fix",
     "lint": "ts-standard",
     "package": "ncc build --source-map --license licenses.txt",
-    "prepare": "husky install"
+    "prepare": "husky"
   },
   "ts-standard": {
     "ignore": [
