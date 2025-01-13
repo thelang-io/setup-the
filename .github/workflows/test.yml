@@ -12,15 +12,15 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - macos-12
           - macos-13
           - macos-14
           - macos-15
           - ubuntu-20.04
           - ubuntu-22.04
-          - ubuntu-25.04
+          - ubuntu-24.04
           - windows-2019
           - windows-2022
+          - windows-2025
     steps:
       - uses: actions/checkout@v4
       - run: npm install
@@ -33,15 +33,9 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - macos-12
-          - macos-13
-          - macos-14
-          - macos-15
-          - ubuntu-20.04
-          - ubuntu-22.04
-          - ubuntu-25.04
-          - windows-2019
-          - windows-2022
+          - macos-latest
+          - ubuntu-latest
+          - windows-latest
     steps:
       - uses: actions/checkout@v4
       - run: npm install
