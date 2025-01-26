@@ -1,10 +1,11 @@
 import { execa } from 'execa'
+import * as path from 'path'
 
-export function downloadFilename (): string {
+export function cliFilename (): string {
   return 'the' + (platformName() === 'windows' ? '.exe' : '')
 }
 
-export function downloadUrl (version: string): string {
+export function cliUrl (version: string): string {
   const platform = platformName()
   const arch = platformArch()
   const [major = '', minor = ''] = version.split('.')
@@ -17,23 +18,33 @@ export function downloadUrl (version: string): string {
   }
 }
 
-export function extractVersionFromOutput (output: string): string | null {
-  const [match] = output.match(/Version ([.\d]+) \([\w ]+\)/g) ?? [null]
+export function dependenciesPath (): string {
+  const platform = platformName()
+  const arch = platformArch()
 
-  if (match === null) {
-    return null
+  if (platform === 'macos') {
+    return path.join('native', platform, arch)
   }
 
-  const [result] = match.match(/[.\d]+/g) ?? [null]
+  return path.join('native', platform)
+}
+
+export function homeDirectory (): string {
+  const result = process.env.HOME ?? ''
+
+  if (result === '') {
+    throw new Error('HOME environment variable is not set')
+  }
+
   return result
 }
 
-export async function getInstalledVersion (): Promise<string> {
+export async function installedVersion (): Promise<string> {
   const { stderr, stdout } = await execa('the', ['-v'])
   let version = null
 
   if (stderr.length === 0 && stdout.length !== 0) {
-    version = extractVersionFromOutput(stdout)
+    version = versionFromOutput(stdout)
   }
 
   if (version === null) {
@@ -59,4 +70,25 @@ export function platformName (): string {
   } else {
     return 'linux'
   }
+}
+
+export function tempDirectory (): string {
+  const result = process.env.RUNNER_TEMP ?? ''
+
+  if (result === '') {
+    return path.join(__dirname, 'tmp')
+  }
+
+  return result
+}
+
+export function versionFromOutput (output: string): string | null {
+  const [match] = output.match(/Version ([.\d]+) \([\w ]+\)/g) ?? [null]
+
+  if (match === null) {
+    return null
+  }
+
+  const [result] = match.match(/[.\d]+/g) ?? [null]
+  return result
 }
