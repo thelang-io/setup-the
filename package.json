@@ -8,16 +8,16 @@
   "private": true,
   "repository": "github:thelang-io/setup-the",
   "dependencies": {
-    "@actions/core": "^1.10.0"
+    "@actions/core": "^1.11.1"
   },
   "devDependencies": {
-    "@actions/tool-cache": "^2.0.0",
-    "@types/node": "^22.5.0",
-    "@vercel/ncc": "^0.38.0",
-    "execa": "^9.3.0",
-    "husky": "^9.1.0",
-    "ts-standard": "^12.0.0",
-    "typescript": "~5.2.0"
+    "@actions/tool-cache": "^2.0.2",
+    "@types/node": "^22.10.10",
+    "@vercel/ncc": "^0.38.3",
+    "execa": "^9.5.2",
+    "husky": "^9.1.7",
+    "ts-standard": "^12.0.2",
+    "typescript": "~5.1.0"
   },
   "keywords": [
     "actions",

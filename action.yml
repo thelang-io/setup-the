@@ -13,7 +13,7 @@ outputs:
     description: 'The programming language version that was installed.'
 
 runs:
-  using: 'node16'
+  using: 'node22'
   main: 'dist/index.js'
 
 branding:
