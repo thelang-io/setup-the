@@ -20,9 +20,10 @@ async function installCompiler (version: string): Promise<void> {
   core.debug('Installing The compiler ...')
 
   const compilerDirectory = path.join(installationDirectory, 'the')
-  const compilerBuildDirectory = process.platform === 'win32'
-    ? path.join(compilerDirectory, 'build', 'Release')
-    : path.join(compilerDirectory, 'build')
+  const compilerBuildDirectory = path.join(compilerDirectory, 'build')
+  const compilerReleaseDirectory = process.platform === 'win32'
+    ? path.join(compilerBuildDirectory, 'Release')
+    : compilerBuildDirectory
   const compilerTargetDirectory = path.join(utils.homeDirectory(), '.the', 'bin')
   const compilerTargetLocation = path.join(compilerTargetDirectory, `compiler${utils.binaryExtension()}`)
 
@@ -39,9 +40,13 @@ async function installCompiler (version: string): Promise<void> {
     ]
   })
 
-  await cmake.build(compilerBuildDirectory, { target: 'the' })
+  await cmake.build(compilerBuildDirectory, {
+    config: 'Release',
+    target: 'the'
+  })
+
   await io.mkdirP(compilerTargetDirectory)
-  await io.cp(path.join(compilerBuildDirectory, `the${utils.binaryExtension()}`), compilerTargetLocation)
+  await io.cp(path.join(compilerReleaseDirectory, `the${utils.binaryExtension()}`), compilerTargetLocation)
 }
 
 async function install (version: string): Promise<string> {

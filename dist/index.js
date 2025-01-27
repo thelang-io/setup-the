@@ -174,9 +174,10 @@ function installCompiler(version) {
         core.exportVariable('DEPS_DIR', path.join(dependenciesPath, utils.dependenciesPath()));
         core.debug('Installing The compiler ...');
         const compilerDirectory = path.join(installationDirectory, 'the');
-        const compilerBuildDirectory = process.platform === 'win32'
-            ? path.join(compilerDirectory, 'build', 'Release')
-            : path.join(compilerDirectory, 'build');
+        const compilerBuildDirectory = path.join(compilerDirectory, 'build');
+        const compilerReleaseDirectory = process.platform === 'win32'
+            ? path.join(compilerBuildDirectory, 'Release')
+            : compilerBuildDirectory;
         const compilerTargetDirectory = path.join(utils.homeDirectory(), '.the', 'bin');
         const compilerTargetLocation = path.join(compilerTargetDirectory, `compiler${utils.binaryExtension()}`);
         yield git_1.git.clone('https://github.com/thelang-io/the.git', {
@@ -190,9 +191,12 @@ function installCompiler(version) {
                 { name: 'CMAKE_BUILD_TYPE', value: 'Release' }
             ]
         });
-        yield cmake_1.cmake.build(compilerBuildDirectory, { target: 'the' });
+        yield cmake_1.cmake.build(compilerBuildDirectory, {
+            config: 'Release',
+            target: 'the'
+        });
         yield io.mkdirP(compilerTargetDirectory);
-        yield io.cp(path.join(compilerBuildDirectory, `the${utils.binaryExtension()}`), compilerTargetLocation);
+        yield io.cp(path.join(compilerReleaseDirectory, `the${utils.binaryExtension()}`), compilerTargetLocation);
     });
 }
 function install(version) {
