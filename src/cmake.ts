@@ -1,4 +1,4 @@
-import { execa } from 'execa'
+import { exec } from '@actions/exec'
 
 export interface CMakeVariable {
   name: string
@@ -40,7 +40,7 @@ export class CMake {
       args.push(...this.variables(options.variables))
     }
 
-    await execa('cmake', args)
+    await exec('cmake', args)
   }
 
   public async build (dir: string, options: CMakeBuildOptions = {}): Promise<void> {
@@ -58,7 +58,7 @@ export class CMake {
       args.push('--target', options.target)
     }
 
-    await execa('cmake', args)
+    await exec('cmake', args)
   }
 
   public async install (dir: string, options: CMakeInstallOptions = {}): Promise<void> {
@@ -72,7 +72,7 @@ export class CMake {
       args.push('--prefix', options.prefix)
     }
 
-    await execa('cmake', args)
+    await exec('cmake', args)
   }
 
   private variables (variables: CMakeVariable[]): string[] {

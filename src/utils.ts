@@ -1,4 +1,4 @@
-import { execa } from 'execa'
+import { exec } from '@actions/exec'
 import * as path from 'path'
 
 export function cliFilename (): string {
@@ -40,10 +40,19 @@ export function homeDirectory (): string {
 }
 
 export async function installedVersion (): Promise<string> {
-  const { stderr, stdout } = await execa('the', ['-v'])
+  let stdout = ''
+
+  const exitCode = await exec('the', ['-v'], {
+    listeners: {
+      stdout: (data) => {
+        stdout += data.toString()
+      }
+    }
+  })
+
   let version = null
 
-  if (stderr.length === 0 && stdout.length !== 0) {
+  if (exitCode === 0 && stdout.length !== 0) {
     version = versionFromOutput(stdout)
   }
 
@@ -83,12 +92,6 @@ export function tempDirectory (): string {
 }
 
 export function versionFromOutput (output: string): string | null {
-  const [match] = output.match(/Version ([.\d]+) \([\w ]+\)/g) ?? [null]
-
-  if (match === null) {
-    return null
-  }
-
-  const [result] = match.match(/[.\d]+/g) ?? [null]
-  return result
+  const matches = output.match(/Version ([.\d]+)/) ?? []
+  return matches[1] ?? null
 }

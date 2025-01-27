@@ -1,4 +1,4 @@
-import { execa } from 'execa'
+import { exec } from '@actions/exec'
 
 export interface GitCloneOptions {
   depth?: number
@@ -24,7 +24,7 @@ export class Git {
       args.push(options.directory)
     }
 
-    await execa('git', args)
+    await exec('git', args)
   }
 }
 

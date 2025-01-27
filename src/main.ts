@@ -1,10 +1,11 @@
 import * as core from '@actions/core'
-import * as fs from 'fs'
+import * as fs from 'fs/promises'
+import * as io from '@actions/io'
 import * as path from 'path'
 import * as tc from '@actions/tool-cache'
-import * as utils from './utils'
 import { cmake } from './cmake'
 import { git } from './git'
+import * as utils from './utils'
 
 async function installCompiler (version: string): Promise<void> {
   core.debug('Installing The compiler dependencies ...')
@@ -20,7 +21,8 @@ async function installCompiler (version: string): Promise<void> {
 
   const compilerDirectory = path.join(installationDirectory, 'the')
   const compilerBuildDirectory = path.join(compilerDirectory, 'build')
-  const compilerTargetLocation = path.join(utils.homeDirectory(), '.the', 'bin', 'compiler')
+  const compilerTargetDirectory = path.join(utils.homeDirectory(), '.the', 'bin')
+  const compilerTargetLocation = path.join(compilerTargetDirectory, 'compiler')
 
   await git.clone('https://github.com/thelang-io/the.git', {
     depth: 1,
@@ -36,7 +38,9 @@ async function installCompiler (version: string): Promise<void> {
   })
 
   await cmake.build(compilerBuildDirectory, { target: 'the' })
-  fs.copyFileSync(path.join(compilerBuildDirectory, 'the'), compilerTargetLocation)
+
+  await io.mkdirP(compilerTargetDirectory)
+  await io.cp(path.join(compilerBuildDirectory, 'the'), compilerTargetLocation)
 }
 
 async function install (version: string): Promise<string> {
@@ -47,7 +51,7 @@ async function install (version: string): Promise<string> {
   const installationPath = await tc.downloadTool(utils.cliUrl(version), path.join(installationDirectory, utils.cliFilename()))
 
   if (utils.platformName() !== 'windows') {
-    fs.chmodSync(installationPath, 0o755)
+    await fs.chmod(installationPath, 0o755)
   }
 
   const cachedPath = await tc.cacheDir(installationDirectory, 'the', version)
