@@ -170,7 +170,7 @@ function installCompiler(version) {
         const tempDirectory = utils.tempDirectory();
         const installationDirectory = path.join(tempDirectory, `the-${version}-deps`);
         const dependenciesTarballPath = yield tc.downloadTool('https://cdn.thelang.io/deps.tar.gz');
-        const dependenciesPath = yield tc.extractTar(dependenciesTarballPath, path.join(installationDirectory, path.join(installationDirectory, 'deps')));
+        const dependenciesPath = yield tc.extractTar(dependenciesTarballPath, path.join(installationDirectory, 'deps'));
         core.exportVariable('DEPS_DIR', path.join(dependenciesPath, utils.dependenciesPath()));
         core.debug('Installing The compiler ...');
         const compilerDirectory = path.join(installationDirectory, 'the');
