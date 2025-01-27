@@ -309,21 +309,17 @@ function homeDirectory() {
 exports.homeDirectory = homeDirectory;
 function installedVersion() {
     return __awaiter(this, void 0, void 0, function* () {
-        let versionStderr = '';
-        let versionStdout = '';
-        yield (0, exec_1.exec)('the', ['-v'], {
+        let stdout = '';
+        const exitCode = yield (0, exec_1.exec)('the', ['-v'], {
             listeners: {
-                stderr: (data) => {
-                    versionStderr += data.toString();
-                },
                 stdout: (data) => {
-                    versionStdout += data.toString();
+                    stdout += data.toString();
                 }
             }
         });
         let version = null;
-        if (versionStderr.length === 0 && versionStdout.length !== 0) {
-            version = versionFromOutput(versionStdout);
+        if (exitCode === 0 && stdout.length !== 0) {
+            version = versionFromOutput(stdout);
         }
         if (version === null) {
             throw new Error('Unable to get version of The programming language');
@@ -364,12 +360,8 @@ function tempDirectory() {
 exports.tempDirectory = tempDirectory;
 function versionFromOutput(output) {
     var _a, _b;
-    const [match] = (_a = output.match(/Version ([.\d]+) \([\w ]+\)/g)) !== null && _a !== void 0 ? _a : [null];
-    if (match === null) {
-        return null;
-    }
-    const [result] = (_b = match.match(/[.\d]+/g)) !== null && _b !== void 0 ? _b : [null];
-    return result;
+    const matches = (_a = output.match(/Version ([.\d]+)/)) !== null && _a !== void 0 ? _a : [];
+    return (_b = matches[1]) !== null && _b !== void 0 ? _b : null;
 }
 exports.versionFromOutput = versionFromOutput;
 
