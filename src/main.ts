@@ -21,8 +21,8 @@ async function installCompiler (version: string): Promise<void> {
 
   const compilerDirectory = path.join(installationDirectory, 'the')
   const compilerBuildDirectory = process.platform === 'win32'
-    ? path.join(compilerDirectory, 'build')
-    : path.join(compilerDirectory, 'build', 'Release')
+    ? path.join(compilerDirectory, 'build', 'Release')
+    : path.join(compilerDirectory, 'build')
   const compilerTargetDirectory = path.join(utils.homeDirectory(), '.the', 'bin')
   const compilerTargetLocation = path.join(compilerTargetDirectory, `compiler${utils.binaryExtension()}`)
 

@@ -175,8 +175,8 @@ function installCompiler(version) {
         core.debug('Installing The compiler ...');
         const compilerDirectory = path.join(installationDirectory, 'the');
         const compilerBuildDirectory = process.platform === 'win32'
-            ? path.join(compilerDirectory, 'build')
-            : path.join(compilerDirectory, 'build', 'Release');
+            ? path.join(compilerDirectory, 'build', 'Release')
+            : path.join(compilerDirectory, 'build');
         const compilerTargetDirectory = path.join(utils.homeDirectory(), '.the', 'bin');
         const compilerTargetLocation = path.join(compilerTargetDirectory, `compiler${utils.binaryExtension()}`);
         yield git_1.git.clone('https://github.com/thelang-io/the.git', {
