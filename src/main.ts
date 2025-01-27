@@ -16,7 +16,6 @@ async function installCompiler (version: string): Promise<void> {
   const dependenciesPath = await tc.extractTar(dependenciesTarballPath, path.join(installationDirectory, path.join(installationDirectory, 'deps')))
 
   core.exportVariable('DEPS_DIR', path.join(dependenciesPath, utils.dependenciesPath()))
-
   core.debug('Installing The compiler ...')
 
   const compilerDirectory = path.join(installationDirectory, 'the')
