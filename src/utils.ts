@@ -1,8 +1,8 @@
 import { exec } from '@actions/exec'
 import * as path from 'path'
 
-export function cliFilename (): string {
-  return 'the' + (platformName() === 'windows' ? '.exe' : '')
+export function binaryExtension (): string {
+  return platformName() === 'windows' ? '.exe' : ''
 }
 
 export function cliUrl (version: string): string {

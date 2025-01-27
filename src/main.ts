@@ -20,9 +20,11 @@ async function installCompiler (version: string): Promise<void> {
   core.debug('Installing The compiler ...')
 
   const compilerDirectory = path.join(installationDirectory, 'the')
-  const compilerBuildDirectory = path.join(compilerDirectory, 'build')
+  const compilerBuildDirectory = process.platform === 'win32'
+    ? path.join(compilerDirectory, 'build')
+    : path.join(compilerDirectory, 'build', 'Release')
   const compilerTargetDirectory = path.join(utils.homeDirectory(), '.the', 'bin')
-  const compilerTargetLocation = path.join(compilerTargetDirectory, 'compiler')
+  const compilerTargetLocation = path.join(compilerTargetDirectory, `compiler${utils.binaryExtension()}`)
 
   await git.clone('https://github.com/thelang-io/the.git', {
     depth: 1,
@@ -38,9 +40,8 @@ async function installCompiler (version: string): Promise<void> {
   })
 
   await cmake.build(compilerBuildDirectory, { target: 'the' })
-
   await io.mkdirP(compilerTargetDirectory)
-  await io.cp(path.join(compilerBuildDirectory, 'the'), compilerTargetLocation)
+  await io.cp(path.join(compilerBuildDirectory, `the${utils.binaryExtension()}`), compilerTargetLocation)
 }
 
 async function install (version: string): Promise<string> {
@@ -48,7 +49,7 @@ async function install (version: string): Promise<string> {
 
   const tempDirectory = utils.tempDirectory()
   const installationDirectory = path.join(tempDirectory, `the-${version}`)
-  const installationPath = await tc.downloadTool(utils.cliUrl(version), path.join(installationDirectory, utils.cliFilename()))
+  const installationPath = await tc.downloadTool(utils.cliUrl(version), path.join(installationDirectory, `the${utils.binaryExtension()}`))
 
   if (utils.platformName() !== 'windows') {
     await fs.chmod(installationPath, 0o755)

@@ -174,9 +174,11 @@ function installCompiler(version) {
         core.exportVariable('DEPS_DIR', path.join(dependenciesPath, utils.dependenciesPath()));
         core.debug('Installing The compiler ...');
         const compilerDirectory = path.join(installationDirectory, 'the');
-        const compilerBuildDirectory = path.join(compilerDirectory, 'build');
+        const compilerBuildDirectory = process.platform === 'win32'
+            ? path.join(compilerDirectory, 'build')
+            : path.join(compilerDirectory, 'build', 'Release');
         const compilerTargetDirectory = path.join(utils.homeDirectory(), '.the', 'bin');
-        const compilerTargetLocation = path.join(compilerTargetDirectory, 'compiler');
+        const compilerTargetLocation = path.join(compilerTargetDirectory, `compiler${utils.binaryExtension()}`);
         yield git_1.git.clone('https://github.com/thelang-io/the.git', {
             depth: 1,
             directory: compilerDirectory,
@@ -190,7 +192,7 @@ function installCompiler(version) {
         });
         yield cmake_1.cmake.build(compilerBuildDirectory, { target: 'the' });
         yield io.mkdirP(compilerTargetDirectory);
-        yield io.cp(path.join(compilerBuildDirectory, 'the'), compilerTargetLocation);
+        yield io.cp(path.join(compilerBuildDirectory, `the${utils.binaryExtension()}`), compilerTargetLocation);
     });
 }
 function install(version) {
@@ -198,7 +200,7 @@ function install(version) {
         core.debug(`Could not find The programming language version ${version} in cache, downloading it ...`);
         const tempDirectory = utils.tempDirectory();
         const installationDirectory = path.join(tempDirectory, `the-${version}`);
-        const installationPath = yield tc.downloadTool(utils.cliUrl(version), path.join(installationDirectory, utils.cliFilename()));
+        const installationPath = yield tc.downloadTool(utils.cliUrl(version), path.join(installationDirectory, `the${utils.binaryExtension()}`));
         if (utils.platformName() !== 'windows') {
             yield fs.chmod(installationPath, 0o755);
         }
@@ -269,13 +271,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.versionFromOutput = exports.tempDirectory = exports.platformName = exports.platformArch = exports.installedVersion = exports.homeDirectory = exports.dependenciesPath = exports.cliUrl = exports.cliFilename = void 0;
+exports.versionFromOutput = exports.tempDirectory = exports.platformName = exports.platformArch = exports.installedVersion = exports.homeDirectory = exports.dependenciesPath = exports.cliUrl = exports.binaryExtension = void 0;
 const exec_1 = __nccwpck_require__(5236);
 const path = __importStar(__nccwpck_require__(6928));
-function cliFilename() {
-    return 'the' + (platformName() === 'windows' ? '.exe' : '');
+function binaryExtension() {
+    return platformName() === 'windows' ? '.exe' : '';
 }
-exports.cliFilename = cliFilename;
+exports.binaryExtension = binaryExtension;
 function cliUrl(version) {
     const platform = platformName();
     const arch = platformArch();
