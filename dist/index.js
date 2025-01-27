@@ -299,8 +299,8 @@ function dependenciesPath() {
 }
 exports.dependenciesPath = dependenciesPath;
 function homeDirectory() {
-    var _a;
-    const result = (_a = process.env.HOME) !== null && _a !== void 0 ? _a : '';
+    var _a, _b;
+    const result = (_b = (_a = process.env.HOME) !== null && _a !== void 0 ? _a : process.env.USERPROFILE) !== null && _b !== void 0 ? _b : '';
     if (result === '') {
         throw new Error('HOME environment variable is not set');
     }

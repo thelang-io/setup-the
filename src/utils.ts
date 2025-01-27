@@ -30,7 +30,7 @@ export function dependenciesPath (): string {
 }
 
 export function homeDirectory (): string {
-  const result = process.env.HOME ?? ''
+  const result = process.env.HOME ?? process.env.USERPROFILE ?? ''
 
   if (result === '') {
     throw new Error('HOME environment variable is not set')
