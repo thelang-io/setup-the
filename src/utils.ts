@@ -18,31 +18,6 @@ export function cliUrl (version: string): string {
   }
 }
 
-export function dependenciesPath (): string {
-  const platform = platformName()
-  const arch = platformArch()
-
-  if (platform === 'macos') {
-    return path.join('native', platform, arch)
-  }
-
-  return path.join('native', platform)
-}
-
-export function homeDirectory (): string {
-  const result = process.env.HOME ?? process.env.USERPROFILE ?? ''
-
-  if (result === '') {
-    throw new Error('HOME environment variable is not set')
-  }
-
-  return result
-}
-
-export async function installOfflineCompiler (): Promise<void> {
-  await exec('the offline')
-}
-
 export async function installedVersion (): Promise<string> {
   let stdout = ''
 
@@ -57,7 +32,8 @@ export async function installedVersion (): Promise<string> {
   let version = null
 
   if (exitCode === 0 && stdout.length !== 0) {
-    version = versionFromOutput(stdout)
+    const matches = stdout.match(/Version ([.\d]+)/) ?? []
+    version = matches[1] ?? null
   }
 
   if (version === null) {
@@ -93,9 +69,4 @@ export function tempDirectory (): string {
   }
 
   return result
-}
-
-export function versionFromOutput (output: string): string | null {
-  const matches = output.match(/Version ([.\d]+)/) ?? []
-  return matches[1] ?? null
 }

@@ -40,13 +40,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(7484));
+const exec_1 = __nccwpck_require__(5236);
 const fs = __importStar(__nccwpck_require__(1943));
 const path = __importStar(__nccwpck_require__(6928));
 const tc = __importStar(__nccwpck_require__(3472));
 const utils = __importStar(__nccwpck_require__(9277));
-function install(version) {
+function download(version) {
     return __awaiter(this, void 0, void 0, function* () {
-        core.debug(`Could not find The programming language version ${version} in cache, downloading it ...`);
+        core.debug(`Couldn't find The programming language ${version} in cache, downloading it ...`);
         const tempDirectory = utils.tempDirectory();
         const installationDirectory = path.join(tempDirectory, `the-${version}`);
         const installationPath = yield tc.downloadTool(utils.cliUrl(version), path.join(installationDirectory, `the${utils.binaryExtension()}`));
@@ -54,7 +55,7 @@ function install(version) {
             yield fs.chmod(installationPath, 0o755);
         }
         const cachedPath = yield tc.cacheDir(installationDirectory, 'the', version);
-        core.debug(`Cached The programming language version ${version} to ${cachedPath}.`);
+        core.debug(`Cached The programming language ${version} to ${cachedPath}.`);
         return cachedPath;
     });
 }
@@ -63,8 +64,8 @@ function run() {
         const version = core.getInput('the-version', { required: true });
         let cachedPath = tc.find('the', version);
         if (cachedPath.length === 0) {
-            cachedPath = yield install(version);
-            yield utils.installOfflineCompiler();
+            cachedPath = yield download(version);
+            yield (0, exec_1.exec)('the offline');
         }
         core.addPath(cachedPath);
         core.setOutput('the-version', utils.installedVersion());
@@ -120,7 +121,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.versionFromOutput = exports.tempDirectory = exports.platformName = exports.platformArch = exports.installedVersion = exports.installOfflineCompiler = exports.homeDirectory = exports.dependenciesPath = exports.cliUrl = exports.binaryExtension = void 0;
+exports.tempDirectory = exports.platformName = exports.platformArch = exports.installedVersion = exports.cliUrl = exports.binaryExtension = void 0;
 const exec_1 = __nccwpck_require__(5236);
 const path = __importStar(__nccwpck_require__(6928));
 function binaryExtension() {
@@ -140,31 +141,8 @@ function cliUrl(version) {
     }
 }
 exports.cliUrl = cliUrl;
-function dependenciesPath() {
-    const platform = platformName();
-    const arch = platformArch();
-    if (platform === 'macos') {
-        return path.join('native', platform, arch);
-    }
-    return path.join('native', platform);
-}
-exports.dependenciesPath = dependenciesPath;
-function homeDirectory() {
-    var _a, _b;
-    const result = (_b = (_a = process.env.HOME) !== null && _a !== void 0 ? _a : process.env.USERPROFILE) !== null && _b !== void 0 ? _b : '';
-    if (result === '') {
-        throw new Error('HOME environment variable is not set');
-    }
-    return result;
-}
-exports.homeDirectory = homeDirectory;
-function installOfflineCompiler() {
-    return __awaiter(this, void 0, void 0, function* () {
-        yield (0, exec_1.exec)('the offline');
-    });
-}
-exports.installOfflineCompiler = installOfflineCompiler;
 function installedVersion() {
+    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         let stdout = '';
         const exitCode = yield (0, exec_1.exec)('the', ['-v'], {
@@ -176,7 +154,8 @@ function installedVersion() {
         });
         let version = null;
         if (exitCode === 0 && stdout.length !== 0) {
-            version = versionFromOutput(stdout);
+            const matches = (_a = stdout.match(/Version ([.\d]+)/)) !== null && _a !== void 0 ? _a : [];
+            version = (_b = matches[1]) !== null && _b !== void 0 ? _b : null;
         }
         if (version === null) {
             throw new Error('Unable to get version of The programming language');
@@ -215,12 +194,6 @@ function tempDirectory() {
     return result;
 }
 exports.tempDirectory = tempDirectory;
-function versionFromOutput(output) {
-    var _a, _b;
-    const matches = (_a = output.match(/Version ([.\d]+)/)) !== null && _a !== void 0 ? _a : [];
-    return (_b = matches[1]) !== null && _b !== void 0 ? _b : null;
-}
-exports.versionFromOutput = versionFromOutput;
 
 
 /***/ }),
