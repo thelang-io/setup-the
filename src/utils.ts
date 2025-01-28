@@ -39,6 +39,10 @@ export function homeDirectory (): string {
   return result
 }
 
+export async function installOfflineCompiler (): Promise<void> {
+  await exec('the offline')
+}
+
 export async function installedVersion (): Promise<string> {
   let stdout = ''
 

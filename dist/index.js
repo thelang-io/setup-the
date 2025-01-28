@@ -1,123 +1,6 @@
 require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 3499:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.cmake = exports.CMake = void 0;
-const exec_1 = __nccwpck_require__(5236);
-// https://cmake.org/cmake/help/latest/manual/cmake.1.html
-class CMake {
-    generate(sourcePath, options = {}) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const args = [sourcePath];
-            if (options.buildPath !== undefined) {
-                args.push('-B', options.buildPath);
-            }
-            if (options.generator !== undefined) {
-                args.push('-G', options.generator);
-            }
-            if (options.variables !== undefined) {
-                args.push(...this.variables(options.variables));
-            }
-            yield (0, exec_1.exec)('cmake', args);
-        });
-    }
-    build(dir, options = {}) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const args = ['--build', dir];
-            if (options.config !== undefined) {
-                args.push('--config', options.config);
-            }
-            if (options.preset !== undefined) {
-                args.push('--preset', options.preset);
-            }
-            if (options.target !== undefined) {
-                args.push('--target', options.target);
-            }
-            yield (0, exec_1.exec)('cmake', args);
-        });
-    }
-    install(dir, options = {}) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const args = ['--install', dir];
-            if (options.config !== undefined) {
-                args.push('--config', options.config);
-            }
-            if (options.prefix !== undefined) {
-                args.push('--prefix', options.prefix);
-            }
-            yield (0, exec_1.exec)('cmake', args);
-        });
-    }
-    variables(variables) {
-        return variables.map((variable) => {
-            if (variable.type !== undefined) {
-                return ['-D', `${variable.name}:${variable.type}=${variable.value}`];
-            }
-            return ['-D', `${variable.name}=${variable.value}`];
-        }).flat();
-    }
-}
-exports.CMake = CMake;
-exports.cmake = new CMake();
-
-
-/***/ }),
-
-/***/ 9412:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.git = exports.Git = void 0;
-const exec_1 = __nccwpck_require__(5236);
-class Git {
-    clone(repository, options = {}) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const args = ['clone'];
-            if (options.depth !== undefined) {
-                args.push('--depth', options.depth.toString());
-            }
-            if (options.singleBranch !== undefined) {
-                args.push('--single-branch');
-            }
-            args.push(repository);
-            if (options.directory !== undefined) {
-                args.push(options.directory);
-            }
-            yield (0, exec_1.exec)('git', args);
-        });
-    }
-}
-exports.Git = Git;
-exports.git = new Git();
-
-
-/***/ }),
-
 /***/ 5915:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -158,47 +41,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(7484));
 const fs = __importStar(__nccwpck_require__(1943));
-const io = __importStar(__nccwpck_require__(4994));
 const path = __importStar(__nccwpck_require__(6928));
 const tc = __importStar(__nccwpck_require__(3472));
-const cmake_1 = __nccwpck_require__(3499);
-const git_1 = __nccwpck_require__(9412);
 const utils = __importStar(__nccwpck_require__(9277));
-function installCompiler(version) {
-    return __awaiter(this, void 0, void 0, function* () {
-        core.debug('Installing The compiler dependencies ...');
-        const tempDirectory = utils.tempDirectory();
-        const installationDirectory = path.join(tempDirectory, `the-${version}-deps`);
-        const dependenciesTarballPath = yield tc.downloadTool('https://cdn.thelang.io/deps.tar.gz');
-        const dependenciesPath = yield tc.extractTar(dependenciesTarballPath, path.join(installationDirectory, 'deps'));
-        core.exportVariable('DEPS_DIR', path.join(dependenciesPath, utils.dependenciesPath()));
-        core.debug('Installing The compiler ...');
-        const compilerDirectory = path.join(installationDirectory, 'the');
-        const compilerBuildDirectory = path.join(compilerDirectory, 'build');
-        const compilerReleaseDirectory = process.platform === 'win32'
-            ? path.join(compilerBuildDirectory, 'Release')
-            : compilerBuildDirectory;
-        const compilerTargetDirectory = path.join(utils.homeDirectory(), '.the', 'bin');
-        const compilerTargetLocation = path.join(compilerTargetDirectory, `compiler${utils.binaryExtension()}`);
-        yield git_1.git.clone('https://github.com/thelang-io/the.git', {
-            depth: 1,
-            directory: compilerDirectory,
-            singleBranch: true
-        });
-        yield cmake_1.cmake.generate(compilerDirectory, {
-            buildPath: compilerBuildDirectory,
-            variables: [
-                { name: 'CMAKE_BUILD_TYPE', value: 'Release' }
-            ]
-        });
-        yield cmake_1.cmake.build(compilerBuildDirectory, {
-            config: 'Release',
-            target: 'the'
-        });
-        yield io.mkdirP(compilerTargetDirectory);
-        yield io.cp(path.join(compilerReleaseDirectory, `the${utils.binaryExtension()}`), compilerTargetLocation);
-    });
-}
 function install(version) {
     return __awaiter(this, void 0, void 0, function* () {
         core.debug(`Could not find The programming language version ${version} in cache, downloading it ...`);
@@ -219,7 +64,7 @@ function run() {
         let cachedPath = tc.find('the', version);
         if (cachedPath.length === 0) {
             cachedPath = yield install(version);
-            yield installCompiler(version);
+            yield utils.installOfflineCompiler();
         }
         core.addPath(cachedPath);
         core.setOutput('the-version', utils.installedVersion());
@@ -275,7 +120,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.versionFromOutput = exports.tempDirectory = exports.platformName = exports.platformArch = exports.installedVersion = exports.homeDirectory = exports.dependenciesPath = exports.cliUrl = exports.binaryExtension = void 0;
+exports.versionFromOutput = exports.tempDirectory = exports.platformName = exports.platformArch = exports.installedVersion = exports.installOfflineCompiler = exports.homeDirectory = exports.dependenciesPath = exports.cliUrl = exports.binaryExtension = void 0;
 const exec_1 = __nccwpck_require__(5236);
 const path = __importStar(__nccwpck_require__(6928));
 function binaryExtension() {
@@ -313,6 +158,12 @@ function homeDirectory() {
     return result;
 }
 exports.homeDirectory = homeDirectory;
+function installOfflineCompiler() {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield (0, exec_1.exec)('the offline');
+    });
+}
+exports.installOfflineCompiler = installOfflineCompiler;
 function installedVersion() {
     return __awaiter(this, void 0, void 0, function* () {
         let stdout = '';
