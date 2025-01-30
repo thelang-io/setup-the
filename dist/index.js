@@ -178,7 +178,7 @@ function installCompiler(version) {
         const compilerReleaseDirectory = process.platform === 'win32'
             ? path.join(compilerBuildDirectory, 'Release')
             : compilerBuildDirectory;
-        const compilerTargetDirectory = path.join(utils.homeDirectory(), '.the', 'bin');
+        const compilerTargetDirectory = path.join(utils.homeDirectory(), (process.platform === 'win32' ? 'The' : '.the'), 'bin');
         const compilerTargetLocation = path.join(compilerTargetDirectory, `compiler${utils.binaryExtension()}`);
         yield git_1.git.clone('https://github.com/thelang-io/the.git', {
             depth: 1,
@@ -197,6 +197,7 @@ function installCompiler(version) {
         });
         yield io.mkdirP(compilerTargetDirectory);
         yield io.cp(path.join(compilerReleaseDirectory, `the${utils.binaryExtension()}`), compilerTargetLocation);
+        core.addPath(compilerTargetDirectory);
     });
 }
 function install(version) {

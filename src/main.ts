@@ -24,7 +24,7 @@ async function installCompiler (version: string): Promise<void> {
   const compilerReleaseDirectory = process.platform === 'win32'
     ? path.join(compilerBuildDirectory, 'Release')
     : compilerBuildDirectory
-  const compilerTargetDirectory = path.join(utils.homeDirectory(), '.the', 'bin')
+  const compilerTargetDirectory = path.join(utils.homeDirectory(), (process.platform === 'win32' ? 'The' : '.the'), 'bin')
   const compilerTargetLocation = path.join(compilerTargetDirectory, `compiler${utils.binaryExtension()}`)
 
   await git.clone('https://github.com/thelang-io/the.git', {
@@ -47,6 +47,8 @@ async function installCompiler (version: string): Promise<void> {
 
   await io.mkdirP(compilerTargetDirectory)
   await io.cp(path.join(compilerReleaseDirectory, `the${utils.binaryExtension()}`), compilerTargetLocation)
+
+  core.addPath(compilerTargetDirectory)
 }
 
 async function install (version: string): Promise<string> {
