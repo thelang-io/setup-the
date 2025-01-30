@@ -1,8 +1,10 @@
 import { exec } from '@actions/exec'
 import * as path from 'path'
 
+export const isWin = process.platform === 'win32'
+
 export function binaryExtension (): string {
-  return platformName() === 'windows' ? '.exe' : ''
+  return isWin ? '.exe' : ''
 }
 
 export function cliUrl (version: string): string {
@@ -16,6 +18,27 @@ export function cliUrl (version: string): string {
   } else {
     return `https://cdn.thelang.io/cli-core-${platform}@${version}`
   }
+}
+
+export function dependenciesPath (): string {
+  const platform = platformName()
+  const arch = platformArch()
+
+  if (platform === 'macos') {
+    return path.join('native', platform, arch)
+  }
+
+  return path.join('native', platform)
+}
+
+export function homeDirectory (): string {
+  const result = process.env.HOME ?? process.env.USERPROFILE ?? ''
+
+  if (result === '') {
+    throw new Error('HOME environment variable is not set')
+  }
+
+  return result
 }
 
 export async function installedVersion (): Promise<string> {
