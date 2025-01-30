@@ -175,10 +175,10 @@ function installCompiler(version) {
         core.debug('Installing The compiler ...');
         const compilerDirectory = path.join(installationDirectory, 'the');
         const compilerBuildDirectory = path.join(compilerDirectory, 'build');
-        const compilerReleaseDirectory = process.platform === 'win32'
+        const compilerReleaseDirectory = utils.isWin
             ? path.join(compilerBuildDirectory, 'Release')
             : compilerBuildDirectory;
-        const compilerTargetDirectory = path.join(utils.homeDirectory(), (process.platform === 'win32' ? 'The' : '.the'), 'bin');
+        const compilerTargetDirectory = path.join(utils.homeDirectory(), (utils.isWin ? 'The' : '.the'), 'bin');
         const compilerTargetLocation = path.join(compilerTargetDirectory, `compiler${utils.binaryExtension()}`);
         yield git_1.git.clone('https://github.com/thelang-io/the.git', {
             depth: 1,
@@ -200,17 +200,17 @@ function installCompiler(version) {
         core.addPath(compilerTargetDirectory);
     });
 }
-function install(version) {
+function download(version) {
     return __awaiter(this, void 0, void 0, function* () {
-        core.debug(`Could not find The programming language version ${version} in cache, downloading it ...`);
+        core.debug(`Couldn't find The programming language ${version} in cache, downloading it ...`);
         const tempDirectory = utils.tempDirectory();
         const installationDirectory = path.join(tempDirectory, `the-${version}`);
         const installationPath = yield tc.downloadTool(utils.cliUrl(version), path.join(installationDirectory, `the${utils.binaryExtension()}`));
-        if (utils.platformName() !== 'windows') {
+        if (!utils.isWin) {
             yield fs.chmod(installationPath, 0o755);
         }
         const cachedPath = yield tc.cacheDir(installationDirectory, 'the', version);
-        core.debug(`Cached The programming language version ${version} to ${cachedPath}.`);
+        core.debug(`Cached The programming language ${version} to ${cachedPath}.`);
         return cachedPath;
     });
 }
@@ -219,7 +219,7 @@ function run() {
         const version = core.getInput('the-version', { required: true });
         let cachedPath = tc.find('the', version);
         if (cachedPath.length === 0) {
-            cachedPath = yield install(version);
+            cachedPath = yield download(version);
             yield installCompiler(version);
         }
         core.addPath(cachedPath);
@@ -276,11 +276,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.versionFromOutput = exports.tempDirectory = exports.platformName = exports.platformArch = exports.installedVersion = exports.homeDirectory = exports.dependenciesPath = exports.cliUrl = exports.binaryExtension = void 0;
+exports.tempDirectory = exports.platformName = exports.platformArch = exports.installedVersion = exports.homeDirectory = exports.dependenciesPath = exports.cliUrl = exports.binaryExtension = exports.isWin = void 0;
 const exec_1 = __nccwpck_require__(5236);
 const path = __importStar(__nccwpck_require__(6928));
+exports.isWin = process.platform === 'win32';
 function binaryExtension() {
-    return platformName() === 'windows' ? '.exe' : '';
+    return exports.isWin ? '.exe' : '';
 }
 exports.binaryExtension = binaryExtension;
 function cliUrl(version) {
@@ -315,6 +316,7 @@ function homeDirectory() {
 }
 exports.homeDirectory = homeDirectory;
 function installedVersion() {
+    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         let stdout = '';
         const exitCode = yield (0, exec_1.exec)('the', ['-v'], {
@@ -326,7 +328,8 @@ function installedVersion() {
         });
         let version = null;
         if (exitCode === 0 && stdout.length !== 0) {
-            version = versionFromOutput(stdout);
+            const matches = (_a = stdout.match(/Version ([.\d]+)/)) !== null && _a !== void 0 ? _a : [];
+            version = (_b = matches[1]) !== null && _b !== void 0 ? _b : null;
         }
         if (version === null) {
             throw new Error('Unable to get version of The programming language');
@@ -365,12 +368,6 @@ function tempDirectory() {
     return result;
 }
 exports.tempDirectory = tempDirectory;
-function versionFromOutput(output) {
-    var _a, _b;
-    const matches = (_a = output.match(/Version ([.\d]+)/)) !== null && _a !== void 0 ? _a : [];
-    return (_b = matches[1]) !== null && _b !== void 0 ? _b : null;
-}
-exports.versionFromOutput = versionFromOutput;
 
 
 /***/ }),

@@ -1,8 +1,10 @@
 import { exec } from '@actions/exec'
 import * as path from 'path'
 
+export const isWin = process.platform === 'win32'
+
 export function binaryExtension (): string {
-  return platformName() === 'windows' ? '.exe' : ''
+  return isWin ? '.exe' : ''
 }
 
 export function cliUrl (version: string): string {
@@ -53,7 +55,8 @@ export async function installedVersion (): Promise<string> {
   let version = null
 
   if (exitCode === 0 && stdout.length !== 0) {
-    version = versionFromOutput(stdout)
+    const matches = stdout.match(/Version ([.\d]+)/) ?? []
+    version = matches[1] ?? null
   }
 
   if (version === null) {
@@ -89,9 +92,4 @@ export function tempDirectory (): string {
   }
 
   return result
-}
-
-export function versionFromOutput (output: string): string | null {
-  const matches = output.match(/Version ([.\d]+)/) ?? []
-  return matches[1] ?? null
 }

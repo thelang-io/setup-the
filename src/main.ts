@@ -21,10 +21,10 @@ async function installCompiler (version: string): Promise<void> {
 
   const compilerDirectory = path.join(installationDirectory, 'the')
   const compilerBuildDirectory = path.join(compilerDirectory, 'build')
-  const compilerReleaseDirectory = process.platform === 'win32'
+  const compilerReleaseDirectory = utils.isWin
     ? path.join(compilerBuildDirectory, 'Release')
     : compilerBuildDirectory
-  const compilerTargetDirectory = path.join(utils.homeDirectory(), (process.platform === 'win32' ? 'The' : '.the'), 'bin')
+  const compilerTargetDirectory = path.join(utils.homeDirectory(), (utils.isWin ? 'The' : '.the'), 'bin')
   const compilerTargetLocation = path.join(compilerTargetDirectory, `compiler${utils.binaryExtension()}`)
 
   await git.clone('https://github.com/thelang-io/the.git', {
@@ -51,19 +51,23 @@ async function installCompiler (version: string): Promise<void> {
   core.addPath(compilerTargetDirectory)
 }
 
-async function install (version: string): Promise<string> {
-  core.debug(`Could not find The programming language version ${version} in cache, downloading it ...`)
+async function download (version: string): Promise<string> {
+  core.debug(`Couldn't find The programming language ${version} in cache, downloading it ...`)
 
   const tempDirectory = utils.tempDirectory()
   const installationDirectory = path.join(tempDirectory, `the-${version}`)
-  const installationPath = await tc.downloadTool(utils.cliUrl(version), path.join(installationDirectory, `the${utils.binaryExtension()}`))
 
-  if (utils.platformName() !== 'windows') {
+  const installationPath = await tc.downloadTool(
+    utils.cliUrl(version),
+    path.join(installationDirectory, `the${utils.binaryExtension()}`)
+  )
+
+  if (!utils.isWin) {
     await fs.chmod(installationPath, 0o755)
   }
 
   const cachedPath = await tc.cacheDir(installationDirectory, 'the', version)
-  core.debug(`Cached The programming language version ${version} to ${cachedPath}.`)
+  core.debug(`Cached The programming language ${version} to ${cachedPath}.`)
 
   return cachedPath
 }
@@ -73,7 +77,7 @@ async function run (): Promise<void> {
   let cachedPath = tc.find('the', version)
 
   if (cachedPath.length === 0) {
-    cachedPath = await install(version)
+    cachedPath = await download(version)
     await installCompiler(version)
   }
 
