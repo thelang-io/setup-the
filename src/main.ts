@@ -16,7 +16,7 @@ async function installCompiler (version: string): Promise<void> {
   const dependenciesTarballPath = await tc.downloadTool('https://cdn.thelang.io/deps.tar.gz')
   const dependenciesPath = await tc.extractTar(dependenciesTarballPath, path.join(installationDirectory, 'deps'))
 
-  core.exportVariable('DEPS_DIR', path.join(dependenciesPath, utils.dependenciesPath()))
+  core.exportVariable('THE_DEPS_DIR', path.join(dependenciesPath, utils.dependenciesPath()))
   core.debug('Installing The compiler ...')
 
   const compilerDirectory = path.join(installationDirectory, 'the')
