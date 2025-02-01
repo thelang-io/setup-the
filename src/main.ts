@@ -31,7 +31,7 @@ async function download (version: string): Promise<string> {
 async function run (): Promise<void> {
   const version = core.getInput('the-version', { required: true })
   let cachedPath = tc.find('the', version)
-  const shouldDownload = cachedPath.length === 0
+  const shouldDownload = cachedPath.length !== 0
 
   if (shouldDownload) {
     cachedPath = await download(version)
@@ -39,12 +39,14 @@ async function run (): Promise<void> {
 
   core.addPath(cachedPath)
 
+  core.debug(JSON.stringify({ 'utils.versionToNumber(version)': utils.versionToNumber(version), OFFLINE_COMPILER_VERSION }))
+
   if (shouldDownload && utils.versionToNumber(version) >= OFFLINE_COMPILER_VERSION) {
     await exec('the offline')
     core.exportVariable('THE_DEPS_DIR', path.join(utils.homePath(), 'deps'))
   }
 
-  core.setOutput('the-version', utils.installedVersion())
+  core.setOutput('the-version', await utils.installedVersion())
 }
 
 run().catch((err) => {

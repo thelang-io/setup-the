@@ -1,3 +1,7 @@
 main {
-  print("Hello, World!")
+  mut req := request_open("GET", "https://ci.thelang.io/echo?ip")
+  res := req.read()
+  req.close()
+
+  print(req.data.str())
 }

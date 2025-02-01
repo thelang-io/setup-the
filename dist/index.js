@@ -64,16 +64,17 @@ function run() {
     return __awaiter(this, void 0, void 0, function* () {
         const version = core.getInput('the-version', { required: true });
         let cachedPath = tc.find('the', version);
-        const shouldDownload = cachedPath.length === 0;
+        const shouldDownload = cachedPath.length !== 0;
         if (shouldDownload) {
             cachedPath = yield download(version);
         }
         core.addPath(cachedPath);
+        core.debug(JSON.stringify({ 'utils.versionToNumber(version)': utils.versionToNumber(version), OFFLINE_COMPILER_VERSION: OFFLINE_COMPILER_VERSION }));
         if (shouldDownload && utils.versionToNumber(version) >= OFFLINE_COMPILER_VERSION) {
             yield (0, exec_1.exec)('the offline');
             core.exportVariable('THE_DEPS_DIR', path.join(utils.homePath(), 'deps'));
         }
-        core.setOutput('the-version', utils.installedVersion());
+        core.setOutput('the-version', yield utils.installedVersion());
     });
 }
 run().catch((err) => {
