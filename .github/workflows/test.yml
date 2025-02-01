@@ -27,7 +27,7 @@ jobs:
       - run: npm run all
       - uses: ./
       - run: the -v
-      - run: the run test/example --compiler=compiler
+      - run: the run test/example
   test-version:
     runs-on: ${{ matrix.os }}
     strategy:
