@@ -207,7 +207,7 @@ function versionToNumber(version) {
     if (['latest'].includes(version)) {
         return Number.MAX_SAFE_INTEGER;
     }
-    if (!version.match(/^\d+\.\d+\.\d+$/)) {
+    if (version.match(/^\d+\.\d+\.\d+$/) == null) {
         throw new Error(`Invalid version '${version}'`);
     }
     return version.split('.').reduce((acc, part) => {
