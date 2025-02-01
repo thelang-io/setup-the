@@ -204,6 +204,12 @@ function tempDirectory() {
 }
 exports.tempDirectory = tempDirectory;
 function versionToNumber(version) {
+    if (['latest'].includes(version)) {
+        return Number.MAX_SAFE_INTEGER;
+    }
+    if (!version.match(/^\d+\.\d+\.\d+$/)) {
+        throw new Error(`Invalid version '${version}'`);
+    }
     return version.split('.').reduce((acc, part) => {
         return acc * 0x100 + parseInt(part);
     }, 0);
