@@ -3,5 +3,5 @@ main {
   res := req.read()
   req.close()
 
-  print(req.data.str())
+  print(res.data.str())
 }
