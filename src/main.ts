@@ -31,7 +31,7 @@ async function download (version: string): Promise<string> {
 async function run (): Promise<void> {
   const version = core.getInput('the-version', { required: true })
   let cachedPath = tc.find('the', version)
-  const shouldDownload = cachedPath.length !== 0
+  const shouldDownload = cachedPath.length === 0
 
   if (shouldDownload) {
     cachedPath = await download(version)
