@@ -41,6 +41,7 @@ async function run (): Promise<void> {
 
   if (shouldDownload && utils.versionToNumber(version) >= OFFLINE_COMPILER_VERSION) {
     await exec('the offline')
+    core.exportVariable('THE_DEPS_DIR', path.join(utils.homePath(), 'deps'))
   }
 
   core.setOutput('the-version', utils.installedVersion())

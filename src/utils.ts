@@ -1,4 +1,5 @@
 import { exec } from '@actions/exec'
+import * as os from 'os'
 import * as path from 'path'
 
 export const isWin = process.platform === 'win32'
@@ -15,6 +16,10 @@ export function cliUrl (version: string): string {
   } else {
     return `https://cdn.thelang.io/cli-core-${platform}@${version}`
   }
+}
+
+export function homePath (): string {
+  return path.join(os.homedir(), isWin ? 'The' : '.the')
 }
 
 export async function installedVersion (): Promise<string> {

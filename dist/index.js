@@ -71,6 +71,7 @@ function run() {
         core.addPath(cachedPath);
         if (shouldDownload && utils.versionToNumber(version) >= OFFLINE_COMPILER_VERSION) {
             yield (0, exec_1.exec)('the offline');
+            core.exportVariable('THE_DEPS_DIR', path.join(utils.homePath(), 'deps'));
         }
         core.setOutput('the-version', utils.installedVersion());
     });
@@ -125,8 +126,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.versionToNumber = exports.tempDirectory = exports.platformName = exports.platformArch = exports.installedVersion = exports.cliUrl = exports.binaryExtension = exports.isWin = void 0;
+exports.versionToNumber = exports.tempDirectory = exports.platformName = exports.platformArch = exports.installedVersion = exports.homePath = exports.cliUrl = exports.binaryExtension = exports.isWin = void 0;
 const exec_1 = __nccwpck_require__(5236);
+const os = __importStar(__nccwpck_require__(857));
 const path = __importStar(__nccwpck_require__(6928));
 exports.isWin = process.platform === 'win32';
 exports.binaryExtension = exports.isWin ? '.exe' : '';
@@ -143,6 +145,10 @@ function cliUrl(version) {
     }
 }
 exports.cliUrl = cliUrl;
+function homePath() {
+    return path.join(os.homedir(), exports.isWin ? 'The' : '.the');
+}
+exports.homePath = homePath;
 function installedVersion() {
     var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
