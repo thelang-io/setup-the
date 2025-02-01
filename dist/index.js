@@ -63,11 +63,14 @@ function run() {
     return __awaiter(this, void 0, void 0, function* () {
         const version = core.getInput('the-version', { required: true });
         let cachedPath = tc.find('the', version);
-        if (cachedPath.length === 0) {
+        const shouldDownload = cachedPath.length === 0;
+        if (shouldDownload) {
             cachedPath = yield download(version);
-            yield (0, exec_1.exec)('the offline');
         }
         core.addPath(cachedPath);
+        if (shouldDownload) {
+            yield (0, exec_1.exec)('the offline');
+        }
         core.setOutput('the-version', utils.installedVersion());
     });
 }
