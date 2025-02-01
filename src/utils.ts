@@ -69,3 +69,9 @@ export function tempDirectory (): string {
 
   return result
 }
+
+export function versionToNumber (version: string): number {
+  return version.split('.').reduce((acc, part) => {
+    return acc * 0x100 + parseInt(part)
+  }, 0)
+}

@@ -45,6 +45,7 @@ const fs = __importStar(__nccwpck_require__(1943));
 const path = __importStar(__nccwpck_require__(6928));
 const tc = __importStar(__nccwpck_require__(3472));
 const utils = __importStar(__nccwpck_require__(9277));
+const OFFLINE_COMPILER_VERSION = 0x000E0D;
 function download(version) {
     return __awaiter(this, void 0, void 0, function* () {
         core.debug(`Couldn't find The programming language ${version} in cache, downloading it ...`);
@@ -68,7 +69,7 @@ function run() {
             cachedPath = yield download(version);
         }
         core.addPath(cachedPath);
-        if (shouldDownload) {
+        if (shouldDownload && utils.versionToNumber(version) >= OFFLINE_COMPILER_VERSION) {
             yield (0, exec_1.exec)('the offline');
         }
         core.setOutput('the-version', utils.installedVersion());
@@ -124,7 +125,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.tempDirectory = exports.platformName = exports.platformArch = exports.installedVersion = exports.cliUrl = exports.binaryExtension = exports.isWin = void 0;
+exports.versionToNumber = exports.tempDirectory = exports.platformName = exports.platformArch = exports.installedVersion = exports.cliUrl = exports.binaryExtension = exports.isWin = void 0;
 const exec_1 = __nccwpck_require__(5236);
 const path = __importStar(__nccwpck_require__(6928));
 exports.isWin = process.platform === 'win32';
@@ -195,6 +196,12 @@ function tempDirectory() {
     return result;
 }
 exports.tempDirectory = tempDirectory;
+function versionToNumber(version) {
+    return version.split('.').reduce((acc, part) => {
+        return acc * 0x100 + parseInt(part);
+    }, 0);
+}
+exports.versionToNumber = versionToNumber;
 
 
 /***/ }),

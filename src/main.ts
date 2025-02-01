@@ -5,6 +5,8 @@ import * as path from 'path'
 import * as tc from '@actions/tool-cache'
 import * as utils from './utils'
 
+const OFFLINE_COMPILER_VERSION = 0x000E0D
+
 async function download (version: string): Promise<string> {
   core.debug(`Couldn't find The programming language ${version} in cache, downloading it ...`)
 
@@ -37,7 +39,7 @@ async function run (): Promise<void> {
 
   core.addPath(cachedPath)
 
-  if (shouldDownload) {
+  if (shouldDownload && utils.versionToNumber(version) >= OFFLINE_COMPILER_VERSION) {
     await exec('the offline')
   }
 
