@@ -69,7 +69,6 @@ function run() {
             cachedPath = yield download(version);
         }
         core.addPath(cachedPath);
-        core.debug(JSON.stringify({ 'utils.versionToNumber(version)': utils.versionToNumber(version), OFFLINE_COMPILER_VERSION }));
         if (shouldDownload && utils.versionToNumber(version) >= OFFLINE_COMPILER_VERSION) {
             yield (0, exec_1.exec)('the offline');
             core.exportVariable('THE_DEPS_DIR', path.join(utils.homePath(), 'deps'));

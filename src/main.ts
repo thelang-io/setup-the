@@ -39,8 +39,6 @@ async function run (): Promise<void> {
 
   core.addPath(cachedPath)
 
-  core.debug(JSON.stringify({ 'utils.versionToNumber(version)': utils.versionToNumber(version), OFFLINE_COMPILER_VERSION }))
-
   if (shouldDownload && utils.versionToNumber(version) >= OFFLINE_COMPILER_VERSION) {
     await exec('the offline')
     core.exportVariable('THE_DEPS_DIR', path.join(utils.homePath(), 'deps'))
